@@ -22,62 +22,62 @@
 
 @implementation BlockJump
 
-static NSString * const kMenuItemTitle = @"Change BlockJump Shortcut";
+static NSString *const kMenuItemTitle = @"Change BlockJump Shortcut";
 
 + (void)pluginDidLoad:(NSBundle *)plugin
 {
-  static dispatch_once_t once;
-  static id instance = nil;
-  dispatch_once(&once, ^{
-    instance = [[self alloc] init];
-  });
+    static dispatch_once_t once;
+    static id instance = nil;
+    dispatch_once(&once, ^{
+        instance = [[self alloc] init];
+    });
 }
 
 - (instancetype)init
 {
-  if (self = [super init]) {
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(applicationDidFinishLaunching:)
-                                                 name:NSApplicationDidFinishLaunchingNotification
-                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(menuDidChange:)
-                                                 name:NSMenuDidChangeItemNotification
-                                               object:nil];
-  }
-  return self;
+    if (self = [super init]) {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(applicationDidFinishLaunching:)
+                                                     name:NSApplicationDidFinishLaunchingNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(menuDidChange:)
+                                                     name:NSMenuDidChangeItemNotification
+                                                   object:nil];
+    }
+    return self;
 }
 
 - (void)registerDefaultShortcut
 {
-  MASShortcut *defaultJumpPrevShortcut = [[MASShortcut alloc] initWithKeyCode:KEY_CODE_LEFT_SQUARE_BRACKET
-                                                                modifierFlags:NSControlKeyMask];
-  MASShortcut *defaultJumpNextShortcut = [[MASShortcut alloc] initWithKeyCode:KEY_CODE_RIGHT_SQUARE_BRACKET
-                                                                modifierFlags:NSControlKeyMask];
-  NSDictionary *defaultJumpPrevValues = @{kBlockJumpPreviousShortcutKey: defaultJumpPrevShortcut.data};
-  NSDictionary *defaultJumpNextValues = @{kBlockJumpNextShortcutKey: defaultJumpNextShortcut.data};
-  NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-  [userDefaults registerDefaults:defaultJumpPrevValues];
-  [userDefaults registerDefaults:defaultJumpNextValues];
+    MASShortcut *defaultJumpPrevShortcut = [[MASShortcut alloc] initWithKeyCode:KEY_CODE_LEFT_SQUARE_BRACKET
+                                                                  modifierFlags:NSControlKeyMask];
+    MASShortcut *defaultJumpNextShortcut = [[MASShortcut alloc] initWithKeyCode:KEY_CODE_RIGHT_SQUARE_BRACKET
+                                                                  modifierFlags:NSControlKeyMask];
+    NSDictionary *defaultJumpPrevValues = @{kBlockJumpPreviousShortcutKey : defaultJumpPrevShortcut.data};
+    NSDictionary *defaultJumpNextValues = @{kBlockJumpNextShortcutKey : defaultJumpNextShortcut.data};
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults registerDefaults:defaultJumpPrevValues];
+    [userDefaults registerDefaults:defaultJumpNextValues];
 }
 
 - (void)addMenuToHostMenu:(NSMenu *)hostMenu
 {
-  if (hostMenu) {
-    [hostMenu addItem:[NSMenuItem separatorItem]];
+    if (hostMenu) {
+        [hostMenu addItem:[NSMenuItem separatorItem]];
 
-    NSMenuItem *blockJumpSettingMenu = [[NSMenuItem alloc] initWithTitle:kMenuItemTitle
-                                                                  action:@selector(showSettingPanel)
-                                                           keyEquivalent:@""];
-    [blockJumpSettingMenu setTarget:self];
-    [hostMenu addItem:blockJumpSettingMenu];
-  }
+        NSMenuItem *blockJumpSettingMenu = [[NSMenuItem alloc] initWithTitle:kMenuItemTitle
+                                                                      action:@selector(showSettingPanel)
+                                                               keyEquivalent:@""];
+        [blockJumpSettingMenu setTarget:self];
+        [hostMenu addItem:blockJumpSettingMenu];
+    }
 }
 
 - (void)showSettingPanel
 {
-  self.settingPanel = [[BJSettingsWindowController alloc] initWithWindowNibName:@"BJSettingsWindowController"];
-  [self.settingPanel showWindow:self];
+    self.settingPanel = [[BJSettingsWindowController alloc] initWithWindowNibName:@"BJSettingsWindowController"];
+    [self.settingPanel showWindow:self];
 }
 
 
@@ -85,15 +85,15 @@ static NSString * const kMenuItemTitle = @"Change BlockJump Shortcut";
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
-  [self registerDefaultShortcut];
+    [self registerDefaultShortcut];
 }
 
 - (void)menuDidChange:(NSNotification *)nofication
 {
-  NSMenuItem *editorMenuItem = [[NSApp mainMenu] itemWithTitle:@"Editor"];
-  if (editorMenuItem && ![editorMenuItem.submenu itemWithTitle:kMenuItemTitle]) {
-    [self addMenuToHostMenu:editorMenuItem.submenu];
-  }
+    NSMenuItem *editorMenuItem = [[NSApp mainMenu] itemWithTitle:@"Editor"];
+    if (editorMenuItem && ![editorMenuItem.submenu itemWithTitle:kMenuItemTitle]) {
+        [self addMenuToHostMenu:editorMenuItem.submenu];
+    }
 }
 
 @end
